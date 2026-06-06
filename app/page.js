@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link"
 import {
   Zap, Target, BarChart2, CalendarDays, Flame,
@@ -5,7 +7,7 @@ import {
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 
-const { data: session, status } = useSession()
+
 
 const FEATURES = [
   {
@@ -61,6 +63,8 @@ const STEPS = [
 
 
 export default function HomePage() {
+  const { data: session, status } = useSession()
+
   return (
     <div className="min-h-screen bg-[#08080f] text-white">
 
