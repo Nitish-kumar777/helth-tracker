@@ -12,15 +12,31 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Width of the scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Background of the scrollbar track */
+::-webkit-scrollbar-track {
+  background: #0f0f12; /* Matches your dashboard background */
+}
+
+/* The actual scrollbar handle */
+::-webkit-scrollbar-thumb {
+  background: #33333d; /* Dark grey for the handle */
+  border-radius: 4px;
+  border: 2px solid #0f0f12; /* Creates a "floating" effect */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #4a4a58; /* Slightly lighter on hover */
 }

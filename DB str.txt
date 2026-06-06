@@ -1,0 +1,219 @@
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  email         String    @unique
+  name          String?
+  image         String?
+  password      String
+  role          String    @default("user")
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  habits        Habit[]
+  habitLogs     HabitLog[]
+  userStats     UserStats?
+  badges        Badge[]
+  settings      UserSettings?
+  verificationCodes  VerificationCode[] 
+
+  @@map("users")
+}
+
+// ── Habit master list (source of truth for scaffolding logs) ──────────────────
+model Habit {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String    @db.ObjectId
+  habitId         String    // "H1" … "H7" — unique per user
+  habitName       String
+  unit            String    @default("boolean") // "boolean" | "minutes" | "pages"
+  targetValue     Float?    // Required for minutes/pages
+  timeWindowStart String?   // "HH:MM"
+  timeWindowEnd   String?   // "HH:MM"
+  notes           String?
+  order           Int       @default(0) // Display order
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  user            User      @relation(fields: [userId], references: [id])
+
+  @@unique([userId, habitId])
+  @@map("habits")
+}
+
+model HabitLog {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String       @db.ObjectId
+  date           DateTime     // UTC midnight
+  dailyAccuracy  Float?       // 0-100
+  totalCompleted Int?         // 0-7
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  habits         HabitEntry[]
+
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date])
+  @@map("habit_logs")
+}
+
+type HabitEntry {
+  habitId         String
+  habitName       String
+  completed       Boolean   @default(false)
+  value           Float?
+  targetValue     Float?
+  unit            String?
+  completedAt     DateTime?
+  notes           String?
+  timeWindowStart String?
+  timeWindowEnd   String?
+}
+
+model UserStats {
+  id                  String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId              String          @unique @db.ObjectId
+  currentStreak       Int             @default(0)
+  longestStreak       Int             @default(0)
+  totalPerfectDays    Int             @default(0)
+  totalCompletedDays  Int             @default(0)
+  overallAccuracy     Float           @default(0)
+  lastActiveDate      DateTime?
+
+  weeklyAccuracy      Json            @default("[]")
+  monthlyAccuracy     Json            @default("[]")
+  dailyStreakHistory  Json            @default("[]")
+
+  monthlyReports      MonthlyReport[]
+
+  user                User            @relation(fields: [userId], references: [id])
+
+  @@map("user_stats")
+}
+
+model MonthlyReport {
+  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
+  userStatsId           String    @db.ObjectId
+  year                  Int
+  month                 Int
+  totalDays             Int
+  perfectDays           Int
+  averageAccuracy       Float
+  totalCompletedHabits  Int
+  habitsBreakdown       Json
+  createdAt             DateTime  @default(now())
+
+  userStats             UserStats @relation(fields: [userStatsId], references: [id])
+
+  @@unique([userStatsId, year, month])
+  @@map("monthly_reports")
+}
+
+model Badge {
+  id                String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String     @db.ObjectId
+  badgeType         BadgeType
+  badgeLevel        BadgeLevel
+  accuracyRequired  Float
+  unlockedAt        DateTime   @default(now())
+  celebrationShown  Boolean    @default(false)
+
+  user              User       @relation(fields: [userId], references: [id])
+
+  @@unique([userId, badgeType, badgeLevel])
+  @@map("badges")
+}
+
+model UserSettings {
+  id                    String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId                String        @unique @db.ObjectId
+  theme                 Theme         @default(DARK)
+  notificationsEnabled  Boolean       @default(true)
+  reminderTimes         Json          @default("[]")
+  quoteCategory         QuoteCategory @default(GENERAL)
+  dataExportEnabled     Boolean       @default(false)
+  timezone              String        @default("UTC")
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  user                  User          @relation(fields: [userId], references: [id])
+
+  @@map("user_settings")
+}
+
+model Quote {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  text        String
+  author      String
+  category    QuoteCategory
+  streakLevel StreakLevel?
+  usageCount  Int            @default(0)
+  createdAt   DateTime       @default(now())
+
+  @@map("quotes")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum BadgeType {
+  ACCURACY
+  STREAK
+  PERFECT_WEEK
+  PERFECT_MONTH
+  EARLY_RISER
+  CONSISTENT_SLEEP
+}
+
+enum BadgeLevel {
+  BRONZE
+  SILVER
+  GOLD
+  DIAMOND
+  MILESTONE_7
+  MILESTONE_30
+  MILESTONE_60
+  MILESTONE_90
+  MILESTONE_180
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum QuoteCategory {
+  MORNING
+  PRODUCTIVITY
+  DISCIPLINE
+  STREAK
+  GENERAL
+  SUCCESS
+}
+
+enum StreakLevel {
+  LOW
+  MEDIUM
+  HIGH
+  ELITE
+}
+
+model VerificationCode {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  type      String   // "password" | "email-change" | "verify-email"
+  code      String
+  metadata  String?  // stores newEmail for email-change type
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+  @@map("verification_codes")
+}

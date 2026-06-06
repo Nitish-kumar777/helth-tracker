@@ -1,0 +1,12 @@
+#0D0D15 
+
+Required API Routes
+Method	    Endpoint	          Description
+GET	    /api/habits/today	Fetch today's habit statuses
+POST	/api/habits/toggle	Mark habit as complete/incomplete
+GET	    /api/stats/overview	Get all dashboard metrics
+GET	    /api/stats/heatmap	Get 6-month calendar data
+GET	    /api/stats/streaks	Get streak timeline
+GET	    /api/badges/unlock	Check & award new badges
+GET	    /api/quote/today	Get motivational quote
+POST    /api/habits/new     Add new and remove habit
