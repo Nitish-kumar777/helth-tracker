@@ -50,7 +50,7 @@ export function Header({ onMenuToggle }) {
           {/* Breadcrumb */}
           <div className="flex items-center gap-2">
             <span className="hidden sm:block text-[11px] font-mono font-medium tracking-widest uppercase text-white/25">
-              HealthTrack
+              Habit Tracker
             </span>
             <span className="hidden sm:block text-white/15">/</span>
             <span className="text-[14px] font-bold text-white/80 tracking-tight">

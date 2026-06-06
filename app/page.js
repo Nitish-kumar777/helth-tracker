@@ -3,57 +3,62 @@ import {
   Zap, Target, BarChart2, CalendarDays, Flame,
   ArrowRight, CheckCircle2, Shield, TrendingUp, Sparkles
 } from "lucide-react"
+import { useSession } from "next-auth/react"
+
+const { data: session, status } = useSession()
 
 const FEATURES = [
   {
-    icon: <Target    size={22} className="text-violet-400" />,
-    bg:   "bg-violet-500/10 border-violet-500/20",
+    icon: <Target size={22} className="text-violet-400" />,
+    bg: "bg-violet-500/10 border-violet-500/20",
     title: "Habit Tracking",
-    desc:  "Build up to 10 custom habits — boolean, timed, or page-count. Track your progress daily with precision.",
+    desc: "Build up to 10 custom habits — boolean, timed, or page-count. Track your progress daily with precision.",
   },
   {
     icon: <BarChart2 size={22} className="text-emerald-400" />,
-    bg:   "bg-emerald-500/10 border-emerald-500/20",
+    bg: "bg-emerald-500/10 border-emerald-500/20",
     title: "Analytics",
-    desc:  "Visual breakdowns of your accuracy, streaks, and monthly trends so you always know where you stand.",
+    desc: "Visual breakdowns of your accuracy, streaks, and monthly trends so you always know where you stand.",
   },
   {
     icon: <CalendarDays size={22} className="text-sky-400" />,
-    bg:   "bg-sky-500/10 border-sky-500/20",
+    bg: "bg-sky-500/10 border-sky-500/20",
     title: "Calendar View",
-    desc:  "A colour-coded heatmap of every day. Tap any date to see the full breakdown of that day's habits.",
+    desc: "A colour-coded heatmap of every day. Tap any date to see the full breakdown of that day's habits.",
   },
   {
-    icon: <Flame     size={22} className="text-amber-400" />,
-    bg:   "bg-amber-500/10 border-amber-500/20",
+    icon: <Flame size={22} className="text-amber-400" />,
+    bg: "bg-amber-500/10 border-amber-500/20",
     title: "Streaks & Badges",
-    desc:  "Stay motivated with streak counters, perfect-day tracking, and milestone badges you actually earn.",
+    desc: "Stay motivated with streak counters, perfect-day tracking, and milestone badges you actually earn.",
   },
   {
     icon: <TrendingUp size={22} className="text-pink-400" />,
-    bg:   "bg-pink-500/10 border-pink-500/20",
+    bg: "bg-pink-500/10 border-pink-500/20",
     title: "Weekly Reports",
-    desc:  "See how this week compares to last week. Spot patterns, fix gaps, and keep building momentum.",
+    desc: "See how this week compares to last week. Spot patterns, fix gaps, and keep building momentum.",
   },
   {
-    icon: <Shield    size={22} className="text-indigo-400" />,
-    bg:   "bg-indigo-500/10 border-indigo-500/20",
+    icon: <Shield size={22} className="text-indigo-400" />,
+    bg: "bg-indigo-500/10 border-indigo-500/20",
     title: "Secure & Private",
-    desc:  "Your data stays yours. Password-protected accounts, email verification, and secure authentication.",
+    desc: "Your data stays yours. Password-protected accounts, email verification, and secure authentication.",
   },
 ]
 
 const STATS = [
-  { value: "10",    label: "Habits per day"   },
-  { value: "100%", label: "Accuracy possible"},
-  { value: "∞",    label: "Day streaks"      },
+  { value: "10", label: "Habits per day" },
+  { value: "100%", label: "Accuracy possible" },
+  { value: "∞", label: "Day streaks" },
 ]
 
 const STEPS = [
-  { n:"01", title:"Create your habits",   desc:"Add up to 10 daily habits — choose boolean check-offs, timed sessions, or page counts." },
-  { n:"02", title:"Check in every day",   desc:"Log each habit with our intuitive check-in page. Use the stopwatch for timed habits." },
-  { n:"03", title:"Track your progress",  desc:"Watch your accuracy climb, streaks grow, and insights sharpen over time." },
+  { n: "01", title: "Create your habits", desc: "Add up to 10 daily habits — choose boolean check-offs, timed sessions, or page counts." },
+  { n: "02", title: "Check in every day", desc: "Log each habit with our intuitive check-in page. Use the stopwatch for timed habits." },
+  { n: "03", title: "Track your progress", desc: "Watch your accuracy climb, streaks grow, and insights sharpen over time." },
 ]
+
+
 
 export default function HomePage() {
   return (
@@ -70,19 +75,29 @@ export default function HomePage() {
           <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-purple-500 shadow-[0_0_18px_rgba(124,58,237,0.5)]">
             <Zap size={16} className="text-white fill-white" />
           </div>
-          <span className="text-[17px] font-extrabold tracking-tight text-white">HealthTrack</span>
+          <span className="text-[17px] font-extrabold tracking-tight text-white">Habit Tracker</span>
         </div>
-        <div className="flex items-center gap-2.5">
-          <Link href="/login"
-            className="px-4 py-2 rounded-xl text-[13px] font-semibold text-white/50 hover:text-white/80 hover:bg-white/[0.05] transition-all">
-            Sign In
-          </Link>
-          <Link href="/register"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-500 text-[13px] font-bold text-white shadow-[0_4px_16px_rgba(124,58,237,0.35)] hover:shadow-[0_6px_24px_rgba(124,58,237,0.5)] hover:-translate-y-px transition-all relative overflow-hidden">
-            <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none"/>
-            Get Started
-          </Link>
-        </div>
+        {status === "unauthenticated" ? (
+
+          <div className="flex items-center gap-2.5">
+            <Link href="/login"
+              className="px-4 py-2 rounded-xl text-[13px] font-semibold text-white/50 hover:text-white/80 hover:bg-white/[0.05] transition-all">
+              Sign In
+            </Link>
+            <Link href="/register"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-500 text-[13px] font-bold text-white shadow-[0_4px_16px_rgba(124,58,237,0.35)] hover:shadow-[0_6px_24px_rgba(124,58,237,0.5)] hover:-translate-y-px transition-all relative overflow-hidden">
+              <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none" />
+              Get Started
+            </Link>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2.5">
+            <Link href="/dashboard"
+              className="px-4 py-2 rounded-xl text-[13px] font-semibold text-white/50 hover:text-white/80 hover:bg-white/[0.05] transition-all">
+              Dashboard
+            </Link>
+          </div>
+        )}
       </nav>
 
       {/* ── Hero ── */}
@@ -104,16 +119,16 @@ export default function HomePage() {
         </h1>
 
         <p className="text-[16px] sm:text-[18px] text-white/40 leading-relaxed max-w-2xl mx-auto mb-10">
-          HealthTrack is a personal habit dashboard built for consistency.
+          Habit Tracker is a personal habit dashboard built for consistency.
           Log daily habits, visualise your progress, and earn streaks that keep you coming back.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link href="/register"
             className="flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-500 text-[14px] font-bold text-white shadow-[0_6px_28px_rgba(124,58,237,0.45)] hover:shadow-[0_8px_36px_rgba(124,58,237,0.6)] hover:-translate-y-0.5 active:translate-y-0 transition-all relative overflow-hidden group">
-            <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none"/>
+            <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none" />
             Start for free
-            <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform"/>
+            <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
           </Link>
           <Link href="/login"
             className="flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-white/[0.05] border border-white/[0.1] text-[14px] font-semibold text-white/60 hover:text-white/85 hover:bg-white/[0.08] hover:border-white/[0.16] transition-all">
@@ -170,7 +185,7 @@ export default function HomePage() {
                 {s.n}
               </span>
               <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-violet-600/20 border border-violet-500/30 mb-4">
-                <CheckCircle2 size={15} className="text-violet-400"/>
+                <CheckCircle2 size={15} className="text-violet-400" />
               </div>
               <h3 className="text-[14px] font-bold text-white mb-2">{s.title}</h3>
               <p className="text-[12.5px] text-white/35 leading-relaxed">{s.desc}</p>
@@ -182,20 +197,20 @@ export default function HomePage() {
       {/* ── CTA band ── */}
       <section className="relative z-10 max-w-6xl mx-auto px-6 pb-24">
         <div className="relative bg-gradient-to-br from-violet-600/20 to-purple-600/10 border border-violet-500/25 rounded-3xl p-10 sm:p-14 text-center overflow-hidden">
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-violet-700/10 to-transparent"/>
-          <div className="pointer-events-none absolute -top-20 -right-20 w-64 h-64 rounded-full bg-violet-600/15 blur-3xl"/>
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-violet-700/10 to-transparent" />
+          <div className="pointer-events-none absolute -top-20 -right-20 w-64 h-64 rounded-full bg-violet-600/15 blur-3xl" />
           <div className="relative">
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
               Ready to build better habits?
             </h2>
             <p className="text-[14px] text-white/45 max-w-lg mx-auto mb-8">
-              Join HealthTrack and start tracking your habits today. Free forever.
+              Join Habit Tracker and start tracking your habits today. Free forever.
             </p>
             <Link href="/register"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-500 text-[14px] font-bold text-white shadow-[0_6px_28px_rgba(124,58,237,0.5)] hover:shadow-[0_8px_36px_rgba(124,58,237,0.65)] hover:-translate-y-0.5 transition-all relative overflow-hidden group">
-              <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none"/>
+              <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none" />
               Create free account
-              <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform"/>
+              <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
         </div>
@@ -207,11 +222,11 @@ export default function HomePage() {
           <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-violet-600 to-purple-500">
             <Zap size={12} className="text-white fill-white" />
           </div>
-          <span className="text-[13px] font-bold text-white/50">HealthTrack</span>
+          <span className="text-[13px] font-bold text-white/50">Habit Tracker</span>
         </div>
-        <p className="text-[11px] font-mono text-white/20">© {new Date().getFullYear()} HealthTrack. All rights reserved.</p>
+        <p className="text-[11px] font-mono text-white/20">© {new Date().getFullYear()} Habit Tracker. All rights reserved.</p>
         <div className="flex items-center gap-4">
-          <Link href="/login"    className="text-[12px] text-white/25 hover:text-white/50 transition-colors">Sign In</Link>
+          <Link href="/login" className="text-[12px] text-white/25 hover:text-white/50 transition-colors">Sign In</Link>
           <Link href="/register" className="text-[12px] text-white/25 hover:text-white/50 transition-colors">Register</Link>
         </div>
       </footer>

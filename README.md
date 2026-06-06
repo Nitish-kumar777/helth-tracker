@@ -1,11 +1,11 @@
-# HealthTrack
+# Habit Tracker
 
-HealthTrack is a habit-tracking dashboard built with Next.js, Prisma, and MongoDB.
+Habit Tracker is a habit-tracking dashboard built with Next.js, Prisma, and MongoDB.
 It helps users log daily habits, visualise streaks, track accuracy, earn badges, and manage account settings securely.
 
 ## About this project
 
-HealthTrack was built as a full-stack productivity tool with a focus on consistency and accountability.
+Habit Tracker was built as a full-stack productivity tool with a focus on consistency and accountability.
 It combines client-side habit management, server-side analytics, and transactional email workflows so users can track habits, recover accounts, and stay motivated with badges and streaks.
 
 The project is designed for easy deployment and development using modern tools like Next.js App Router, Prisma with MongoDB, and NextAuth for secure credential-based authentication.
@@ -51,7 +51,7 @@ EMAIL_PORT=465
 EMAIL_SECURE=true
 EMAIL_USER=your-smtp-user
 EMAIL_PASS=your-smtp-password
-EMAIL_FROM="HealthTrack <noreply@yourdomain.com>"
+EMAIL_FROM="Habit Tracker <noreply@yourdomain.com>"
 
 # Optional: only required for profile/avatar uploads
 CLOUDINARY_CLOUD_NAME=your-cloud-name

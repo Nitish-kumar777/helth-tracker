@@ -68,7 +68,7 @@ export default function LoginPage() {
             <Zap size={22} className="text-white fill-white" />
           </div>
           <div className="text-center">
-            <p className="text-[20px] font-extrabold tracking-tight text-white">HealthTrack</p>
+            <p className="text-[20px] font-extrabold tracking-tight text-white">Habit Tracker</p>
             <p className="text-[11px] font-mono tracking-[0.2em] uppercase text-white/25 mt-0.5">dashboard</p>
           </div>
         </div>
@@ -202,7 +202,7 @@ export default function LoginPage() {
 
         {/* Bottom note */}
         <p className="text-center text-[11px] font-mono text-white/15 mt-6">
-          © {new Date().getFullYear()} HealthTrack
+          © {new Date().getFullYear()} Habit Tracker
         </p>
       </div>
     </div>

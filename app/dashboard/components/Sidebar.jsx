@@ -85,7 +85,7 @@ export function Sidebar({ isOpen, toggleSidebar }) {
               <Zap size={16} className="text-white fill-white" />
             </div>
             <div>
-              <p className="text-[15px] font-extrabold tracking-tight text-white leading-none">HealthTrack</p>
+              <p className="text-[15px] font-extrabold tracking-tight text-white leading-none">Habit Tracker</p>
               <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-white/30 mt-0.5">dashboard</p>
             </div>
           </div>
@@ -253,7 +253,7 @@ export function Sidebar({ isOpen, toggleSidebar }) {
 
         {/* ── Footer ── */}
         <div className="px-5 py-4 border-t border-white/[0.06] flex items-center justify-between">
-          <p className="text-[11px] font-mono text-white/20">© 2026 HealthTrack</p>
+          <p className="text-[11px] font-mono text-white/20">© 2026 Habit Tracker</p>
           <span className="text-[10px] font-mono text-white/20 bg-white/[0.05] border border-white/[0.08] px-2 py-0.5 rounded-full">
             v2.1
           </span>

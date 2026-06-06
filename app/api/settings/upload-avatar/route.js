@@ -39,7 +39,7 @@ export async function POST(req) {
     const uploadPromise = new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
-          folder: "healthtrack/avatars",
+          folder: "Habit Tracker/avatars",
           public_id: `user_${session.user.id}`,
           overwrite: true,
           transformation: [

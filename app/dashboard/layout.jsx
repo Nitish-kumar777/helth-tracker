@@ -35,7 +35,7 @@ export default function DashboardLayout({ children }) {
         </div>
 
         <div className="flex flex-col items-center gap-1">
-          <p className="text-[15px] font-bold text-white/80 tracking-tight">HealthTrack</p>
+          <p className="text-[15px] font-bold text-white/80 tracking-tight">Habit Tracker</p>
           <p className="text-[11px] font-mono font-medium tracking-[0.2em] uppercase text-white/25">
             Loading your dashboard…
           </p>
