@@ -94,7 +94,7 @@ export function Header({ onMenuToggle }) {
                     className="w-7 h-7 rounded-lg object-cover"
                   />
                 ) : (
-                  {initial}
+                  initial
                 )}
               </div>
 

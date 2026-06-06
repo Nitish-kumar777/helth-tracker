@@ -234,7 +234,7 @@ export default function DashboardPage() {
                     className="w-full h-full rounded-lg object-cover"
                   />
                 ) : (
-                  {initial}
+                  initial
                 )}
               </div>
               <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-400 border-2 border-[#08080f] shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
