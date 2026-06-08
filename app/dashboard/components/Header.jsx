@@ -118,7 +118,15 @@ export function Header({ onMenuToggle }) {
                 <div className="px-4 py-3.5 border-b border-white/[0.07]">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-[13px] font-extrabold text-white shadow-[0_0_12px_rgba(124,58,237,0.35)] flex-shrink-0">
-                      {initial}
+                      {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt="User"
+                    className="w-full h-full rounded-lg object-cover"
+                  />
+                ) : (
+                  initial
+                )}
                     </div>
                     <div className="min-w-0">
                       <p className="text-[13px] font-bold text-white truncate">{name}</p>

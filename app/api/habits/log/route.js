@@ -11,6 +11,21 @@ function toUTCMidnight(date = new Date()) {
   return d
 }
 
+/** Today's date at UTC midnight */
+function todayUTC() {
+  return toUTCMidnight(new Date())
+}
+
+/** Returns true if the given UTC-midnight Date is strictly before today */
+function isPastDate(date) {
+  return date.getTime() < todayUTC().getTime()
+}
+
+/** Returns true if the given UTC-midnight Date is strictly after today */
+function isFutureDate(date) {
+  return date.getTime() > todayUTC().getTime()
+}
+
 /** Recalculate dailyAccuracy + totalCompleted from an entries array */
 function calcStats(habits) {
   const total     = habits.length
@@ -24,6 +39,7 @@ function calcStats(habits) {
 // ── GET /api/habits/log?date=YYYY-MM-DD ──────────────────────────────────────
 // Returns the HabitLog for a given day (defaults to today).
 // If no log exists for that date, scaffolds one from the user's current habits.
+// Past/future dates return the stored log (read-only) without scaffolding new ones.
 export async function GET(req) {
   try {
     const session = await getServerSession(authOptions)
@@ -44,8 +60,25 @@ export async function GET(req) {
       },
     })
 
-    // If no log exists yet, scaffold one from the user's current habits
+    // Only scaffold a new log for today — past/future dates are read-only views
     if (!log) {
+      // Past date with no log: nothing to show
+      if (isPastDate(targetDate)) {
+        return Response.json(
+          { log: null, message: "No log found for this past date." },
+          { status: 200 }
+        )
+      }
+
+      // Future date: return empty (don't scaffold)
+      if (isFutureDate(targetDate)) {
+        return Response.json(
+          { log: null, message: "No log exists for a future date." },
+          { status: 200 }
+        )
+      }
+
+      // Today: scaffold from current habits
       const userHabits = await prisma.habit.findMany({
         where:   { userId: session.user.id },
         orderBy: { createdAt: "asc" },
@@ -66,8 +99,8 @@ export async function GET(req) {
             habitName:       h.habitName,
             completed:       false,
             value:           null,
-            targetValue:     h.targetValue  ?? null,
-            unit:            h.unit         ?? "boolean",
+            targetValue:     h.targetValue     ?? null,
+            unit:            h.unit            ?? "boolean",
             completedAt:     null,
             notes:           null,
             timeWindowStart: h.timeWindowStart ?? null,
@@ -92,6 +125,8 @@ export async function GET(req) {
 //   "uncheck"       – mark a habit incomplete
 //   "update_value"  – set value (minutes/pages), auto-completes if target met
 //   "add_note"      – attach a journal note to a habit entry
+//
+// Rejects all writes to past or future dates with 403.
 export async function POST(req) {
   try {
     const session = await getServerSession(authOptions)
@@ -112,6 +147,21 @@ export async function POST(req) {
 
     const targetDate = toUTCMidnight(dateParam ? new Date(dateParam) : new Date())
 
+    // ── Date guard: only allow writes for today ───────────────────────────────
+    if (isPastDate(targetDate)) {
+      return Response.json(
+        { message: "Past logs are read-only and cannot be modified." },
+        { status: 403 }
+      )
+    }
+
+    if (isFutureDate(targetDate)) {
+      return Response.json(
+        { message: "Future logs cannot be modified." },
+        { status: 403 }
+      )
+    }
+
     // Load the log (must exist — call GET first to scaffold it)
     const log = await prisma.habitLog.findUnique({
       where: { userId_date: { userId, date: targetDate } },
@@ -119,7 +169,7 @@ export async function POST(req) {
 
     if (!log) {
       return Response.json(
-        { message: "No log found for this date. Call GET first to create it." },
+        { message: "No log found for today. Call GET first to create it." },
         { status: 404 }
       )
     }
@@ -160,8 +210,8 @@ export async function POST(req) {
             { status: 400 }
           )
         }
-        const numVal    = parseFloat(value)
-        entry.value     = numVal
+        const numVal = parseFloat(value)
+        entry.value  = numVal
         // Auto-complete when value meets or exceeds target
         if (entry.targetValue != null && numVal >= entry.targetValue) {
           entry.completed   = true

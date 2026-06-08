@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./SessionProvider/provider";
 import { UserProvider } from "../context/UserContext";
+import { Toaster } from "react-hot-toast";
 
 
 const geistSans = Geist({
@@ -42,7 +43,10 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col">
         <Providers>
-          <UserProvider>{children}</UserProvider>
+          <UserProvider>
+            {children}
+            <Toaster position="top-right" />
+          </UserProvider>
         </Providers>
       </body>
     </html>

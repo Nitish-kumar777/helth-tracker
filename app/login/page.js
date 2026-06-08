@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { signIn, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Zap, Loader2, AlertCircle } from "lucide-react"
+import toast from "react-hot-toast"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -50,6 +51,27 @@ export default function LoginPage() {
       setLoading(false)
       return
     }
+
+     toast.success("Login successful!");
+
+  // Browser Push Notification
+  if ("Notification" in window) {
+    if (Notification.permission === "granted") {
+      new Notification("Welcome Back 👋", {
+        body: `Successfully logged in as ${email}`,
+        icon: "/logo.png", // optional
+      });
+    } else if (Notification.permission !== "denied") {
+      const permission = await Notification.requestPermission();
+
+      if (permission === "granted") {
+        new Notification("Welcome Back 👋", {
+          body: `Successfully logged in as ${email}`,
+          icon: "/logo.png",
+        });
+      }
+    }
+  }
     setLoading(false)
   }
 
