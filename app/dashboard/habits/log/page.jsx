@@ -184,130 +184,13 @@ function Ring({ pct=0, unit="boolean", size=52, stroke=4 }) {
 }
 
 // ── Stopwatch ─────────────────────────────────────────────────────────────────
-// function Stopwatch({ entry, onUpdateValue, loading }) {
-//   const [secs, setSecs]       = useState(Math.round((entry.value ?? 0) * 60))
-//   const [running, setRunning] = useState(false)
-//   const [laps, setLaps]       = useState([])
-//   const intervalRef           = useRef(null)
-//   const target                = entry.targetValue ? Math.round(entry.targetValue * 60) : null
-//   const pct                   = target ? Math.min(100, Math.round((secs/target)*100)) : 0
-//   const done                  = target ? secs >= target : false
-
-//   useEffect(() => {
-//     if (!running) setSecs(Math.round((entry.value ?? 0) * 60))
-//   }, [entry.value]) // eslint-disable-line
-
-//   useEffect(() => {
-//     if (running) {
-//       intervalRef.current = setInterval(() => {
-//         setSecs(s => {
-//           const next = s + 1
-//           if (target && next >= target) {
-//             setRunning(false)
-//             clearInterval(intervalRef.current)
-//             onUpdateValue(parseFloat((next/60).toFixed(2)))
-//           }
-//           return next
-//         })
-//       }, 1000)
-//     } else clearInterval(intervalRef.current)
-//     return () => clearInterval(intervalRef.current)
-//   }, [running]) // eslint-disable-line
-
-//   const bigR = 56, bigStroke = 5
-//   const bigCirc = 2*Math.PI*bigR
-//   const bigOff  = bigCirc - (pct/100)*bigCirc
-
-//   return (
-//     <div className="space-y-3">
-//       <div className="flex items-center gap-5">
-//         <div className="relative flex-shrink-0">
-//           <svg width={128} height={128} viewBox="0 0 128 128" className="-rotate-90">
-//             <circle cx={64} cy={64} r={bigR} fill="none" stroke="#38bdf815" strokeWidth={bigStroke}/>
-//             <circle cx={64} cy={64} r={bigR} fill="none" stroke={done?"#34d399":"#38bdf8"} strokeWidth={bigStroke}
-//               strokeDasharray={bigCirc} strokeDashoffset={bigOff} strokeLinecap="round"
-//               style={{transition:"stroke-dashoffset 0.5s cubic-bezier(0.4,0,0.2,1), stroke 0.4s"}}/>
-//           </svg>
-//           <div className="absolute inset-0 flex flex-col items-center justify-center">
-//             <span className={`font-mono text-[22px] font-black leading-none ${done?"text-emerald-300":"text-white"}`}>
-//               {fmtTime(secs)}
-//             </span>
-//             {target && <span className="text-[9px] font-mono text-white/25 mt-0.5">/ {fmtTime(target)}</span>}
-//             {done && <span className="text-[8px] font-bold uppercase tracking-widest text-emerald-400 mt-1">Done!</span>}
-//           </div>
-//         </div>
-//         <div className="flex-1 flex flex-col gap-2.5">
-//           <div className="flex items-center gap-2">
-//             <button onClick={()=>{setRunning(false);setSecs(0);setLaps([]);onUpdateValue(0)}}
-//               className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/30 hover:text-white/60 hover:bg-white/[0.08] transition-all">
-//               <RotateCcw size={13}/>
-//             </button>
-//             {!running ? (
-//               <button onClick={()=>setRunning(true)}
-//                 className="flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-[0_4px_18px_rgba(56,189,248,0.35)] hover:shadow-[0_6px_24px_rgba(56,189,248,0.5)] hover:-translate-y-px transition-all">
-//                 <Play size={16} fill="white"/>
-//               </button>
-//             ) : (
-//               <button onClick={()=>{setRunning(false);onUpdateValue(parseFloat((secs/60).toFixed(2)))}}
-//                 className="flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-[0_4px_18px_rgba(251,146,60,0.35)] hover:shadow-[0_6px_24px_rgba(251,146,60,0.5)] hover:-translate-y-px transition-all">
-//                 <Pause size={16} fill="white"/>
-//               </button>
-//             )}
-//             <button onClick={()=>setLaps(l=>[...l,secs])} disabled={!running}
-//               className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/30 hover:text-white/60 hover:bg-white/[0.08] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
-//               <Circle size={13}/>
-//             </button>
-//           </div>
-//           {target && (
-//             <div>
-//               <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden">
-//                 <div className={`h-full rounded-full transition-all duration-500 ${done?"bg-emerald-400":"bg-sky-400"}`} style={{width:`${pct}%`}}/>
-//               </div>
-//               <div className="flex justify-between mt-1">
-//                 <span className="text-[9px] font-mono text-white/20">0m</span>
-//                 <span className={`text-[9px] font-mono ${done?"text-emerald-400":"text-white/25"}`}>{pct}%</span>
-//                 <span className="text-[9px] font-mono text-white/20">{entry.targetValue}m</span>
-//               </div>
-//             </div>
-//           )}
-//           <div className="flex items-center gap-2">
-//             <span className="text-[10px] text-white/20 font-mono">Manual:</span>
-//             <button onClick={()=>onUpdateValue(Math.max(0,(entry.value??0)-1))}
-//               className="flex items-center justify-center w-6 h-6 rounded-lg bg-white/[0.04] border border-white/[0.07] text-white/30 hover:text-white/60 transition-all">
-//               <Minus size={9}/>
-//             </button>
-//             <span className="text-[12px] font-mono font-bold text-sky-300 w-9 text-center">{parseFloat((entry.value??0).toFixed(1))}</span>
-//             <button onClick={()=>onUpdateValue((entry.value??0)+1)}
-//               className="flex items-center justify-center w-6 h-6 rounded-lg bg-white/[0.04] border border-white/[0.07] text-white/30 hover:text-white/60 transition-all">
-//               <Plus size={9}/>
-//             </button>
-//             <span className="text-[10px] text-white/20">min</span>
-//             {loading && <Loader2 size={10} className="animate-spin text-white/20 ml-1"/>}
-//           </div>
-//         </div>
-//       </div>
-//       {laps.length > 0 && (
-//         <div className="bg-white/[0.03] border border-white/[0.07] rounded-xl px-3 py-2 space-y-1">
-//           <p className="text-[9px] font-mono uppercase tracking-widest text-white/20 mb-1">Laps</p>
-//           {laps.map((l,i)=>(
-//             <div key={i} className="flex justify-between text-[10px] font-mono">
-//               <span className="text-white/25">Lap {i+1}</span>
-//               <span className="text-white/40">{fmtTime(l)}</span>
-//               {i>0&&<span className="text-sky-400/50">+{fmtTime(l-laps[i-1])}</span>}
-//             </div>
-//           ))}
-//         </div>
-//       )}
-//     </div>
-//   )
-// }
 function Stopwatch({ entry, onUpdateValue, loading }) {
   const [secs, setSecs]       = useState(Math.round((entry.value ?? 0) * 60))
   const [running, setRunning] = useState(false)
   const [laps, setLaps]       = useState([])
   const intervalRef           = useRef(null)
   const target                = entry.targetValue ? Math.round(entry.targetValue * 60) : null
-  const pct                   = target ? Math.min(100, Math.round((secs/target)*100)) : 0
+  const pct                   = target ? Math.min(100, Math.round((secs / target) * 100)) : 0
   const done                  = target ? secs >= target : false
 
   useEffect(() => {
@@ -322,7 +205,7 @@ function Stopwatch({ entry, onUpdateValue, loading }) {
           if (target && next >= target) {
             setRunning(false)
             clearInterval(intervalRef.current)
-            onUpdateValue(parseFloat((next/60).toFixed(2)))
+            onUpdateValue(parseFloat((next / 60).toFixed(2)))
           }
           return next
         })
@@ -331,8 +214,9 @@ function Stopwatch({ entry, onUpdateValue, loading }) {
     return () => clearInterval(intervalRef.current)
   }, [running]) // eslint-disable-line
 
+  // ── NEW: instantly complete to target ──────────────────────────────────────
   const handleComplete = () => {
-    if (!target) return
+    if (!target || done) return
     setRunning(false)
     clearInterval(intervalRef.current)
     setSecs(target)
@@ -340,8 +224,8 @@ function Stopwatch({ entry, onUpdateValue, loading }) {
   }
 
   const bigR = 56, bigStroke = 5
-  const bigCirc = 2*Math.PI*bigR
-  const bigOff  = bigCirc - (pct/100)*bigCirc
+  const bigCirc = 2 * Math.PI * bigR
+  const bigOff  = bigCirc - (pct / 100) * bigCirc
 
   return (
     <div className="space-y-3">
@@ -349,84 +233,105 @@ function Stopwatch({ entry, onUpdateValue, loading }) {
         <div className="relative flex-shrink-0">
           <svg width={128} height={128} viewBox="0 0 128 128" className="-rotate-90">
             <circle cx={64} cy={64} r={bigR} fill="none" stroke="#38bdf815" strokeWidth={bigStroke}/>
-            <circle cx={64} cy={64} r={bigR} fill="none" stroke={done?"#34d399":"#38bdf8"} strokeWidth={bigStroke}
+            <circle cx={64} cy={64} r={bigR} fill="none" stroke={done ? "#34d399" : "#38bdf8"} strokeWidth={bigStroke}
               strokeDasharray={bigCirc} strokeDashoffset={bigOff} strokeLinecap="round"
-              style={{transition:"stroke-dashoffset 0.5s cubic-bezier(0.4,0,0.2,1), stroke 0.4s"}}/>
+              style={{ transition: "stroke-dashoffset 0.5s cubic-bezier(0.4,0,0.2,1), stroke 0.4s" }}/>
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={`font-mono text-[22px] font-black leading-none ${done?"text-emerald-300":"text-white"}`}>
+            <span className={`font-mono text-[22px] font-black leading-none ${done ? "text-emerald-300" : "text-white"}`}>
               {fmtTime(secs)}
             </span>
             {target && <span className="text-[9px] font-mono text-white/25 mt-0.5">/ {fmtTime(target)}</span>}
             {done && <span className="text-[8px] font-bold uppercase tracking-widest text-emerald-400 mt-1">Done!</span>}
           </div>
         </div>
+
         <div className="flex-1 flex flex-col gap-2.5">
+          {/* Row 1: reset / play-pause / lap */}
           <div className="flex items-center gap-2">
-            <button onClick={()=>{setRunning(false);setSecs(0);setLaps([]);onUpdateValue(0)}}
+            <button
+              onClick={() => { setRunning(false); setSecs(0); setLaps([]); onUpdateValue(0) }}
               className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/30 hover:text-white/60 hover:bg-white/[0.08] transition-all">
               <RotateCcw size={13}/>
             </button>
             {!running ? (
-              <button onClick={()=>setRunning(true)}
-                className="flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-[0_4px_18px_rgba(56,189,248,0.35)] hover:shadow-[0_6px_24px_rgba(56,189,248,0.5)] hover:-translate-y-px transition-all">
+              <button
+                onClick={() => setRunning(true)}
+                disabled={done}
+                className="flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-[0_4px_18px_rgba(56,189,248,0.35)] hover:shadow-[0_6px_24px_rgba(56,189,248,0.5)] hover:-translate-y-px transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                 <Play size={16} fill="white"/>
               </button>
             ) : (
-              <button onClick={()=>{setRunning(false);onUpdateValue(parseFloat((secs/60).toFixed(2)))}}
+              <button
+                onClick={() => { setRunning(false); onUpdateValue(parseFloat((secs / 60).toFixed(2))) }}
                 className="flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-[0_4px_18px_rgba(251,146,60,0.35)] hover:shadow-[0_6px_24px_rgba(251,146,60,0.5)] hover:-translate-y-px transition-all">
                 <Pause size={16} fill="white"/>
               </button>
             )}
-            <button onClick={()=>setLaps(l=>[...l,secs])} disabled={!running}
+            <button
+              onClick={() => setLaps(l => [...l, secs])}
+              disabled={!running}
               className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/30 hover:text-white/60 hover:bg-white/[0.08] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
               <Circle size={13}/>
             </button>
-            {/* Complete all time button */}
-            <button
-              onClick={handleComplete}
-              disabled={done || !target}
-              title="Complete all time"
-              className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/30 hover:text-emerald-400 hover:bg-white/[0.08] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
-              <CheckCircle size={13}/>
-            </button>
+
+            {/* ── Complete button ── */}
+            {target && !done && (
+              <button
+                onClick={handleComplete}
+                className="flex items-center gap-1.5 px-3 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-[11px] font-bold text-emerald-300 hover:bg-emerald-500/30 transition-all">
+                <Check size={12}/> Complete
+              </button>
+            )}
+            {loading && <Loader2 size={10} className="animate-spin text-white/20 ml-1"/>}
           </div>
+
+          {/* Progress bar */}
           {target && (
             <div>
               <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden">
-                <div className={`h-full rounded-full transition-all duration-500 ${done?"bg-emerald-400":"bg-sky-400"}`} style={{width:`${pct}%`}}/>
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${done ? "bg-emerald-400" : "bg-sky-400"}`}
+                  style={{ width: `${pct}%` }}/>
               </div>
               <div className="flex justify-between mt-1">
                 <span className="text-[9px] font-mono text-white/20">0m</span>
-                <span className={`text-[9px] font-mono ${done?"text-emerald-400":"text-white/25"}`}>{pct}%</span>
+                <span className={`text-[9px] font-mono ${done ? "text-emerald-400" : "text-white/25"}`}>{pct}%</span>
                 <span className="text-[9px] font-mono text-white/20">{entry.targetValue}m</span>
               </div>
             </div>
           )}
+
+          {/* Manual adjust */}
           <div className="flex items-center gap-2">
             <span className="text-[10px] text-white/20 font-mono">Manual:</span>
-            <button onClick={()=>onUpdateValue(Math.max(0,(entry.value??0)-1))}
+            <button
+              onClick={() => onUpdateValue(Math.max(0, (entry.value ?? 0) - 1))}
               className="flex items-center justify-center w-6 h-6 rounded-lg bg-white/[0.04] border border-white/[0.07] text-white/30 hover:text-white/60 transition-all">
               <Minus size={9}/>
             </button>
-            <span className="text-[12px] font-mono font-bold text-sky-300 w-9 text-center">{parseFloat((entry.value??0).toFixed(1))}</span>
-            <button onClick={()=>onUpdateValue((entry.value??0)+1)}
+            <span className="text-[12px] font-mono font-bold text-sky-300 w-9 text-center">
+              {parseFloat((entry.value ?? 0).toFixed(1))}
+            </span>
+            <button
+              onClick={() => onUpdateValue((entry.value ?? 0) + 1)}
               className="flex items-center justify-center w-6 h-6 rounded-lg bg-white/[0.04] border border-white/[0.07] text-white/30 hover:text-white/60 transition-all">
               <Plus size={9}/>
             </button>
             <span className="text-[10px] text-white/20">min</span>
-            {loading && <Loader2 size={10} className="animate-spin text-white/20 ml-1"/>}
           </div>
         </div>
       </div>
+
+      {/* Laps list */}
       {laps.length > 0 && (
         <div className="bg-white/[0.03] border border-white/[0.07] rounded-xl px-3 py-2 space-y-1">
           <p className="text-[9px] font-mono uppercase tracking-widest text-white/20 mb-1">Laps</p>
-          {laps.map((l,i)=>(
+          {laps.map((l, i) => (
             <div key={i} className="flex justify-between text-[10px] font-mono">
-              <span className="text-white/25">Lap {i+1}</span>
+              <span className="text-white/25">Lap {i + 1}</span>
               <span className="text-white/40">{fmtTime(l)}</span>
-              {i>0&&<span className="text-sky-400/50">+{fmtTime(l-laps[i-1])}</span>}
+              {i > 0 && <span className="text-sky-400/50">+{fmtTime(l - laps[i - 1])}</span>}
             </div>
           ))}
         </div>
@@ -434,6 +339,7 @@ function Stopwatch({ entry, onUpdateValue, loading }) {
     </div>
   )
 }
+
 // ── Notes Modal ───────────────────────────────────────────────────────────────
 function NotesModal({ entry, onSave, onClose, saving }) {
   const [text, setText] = useState(entry.notes || "")
